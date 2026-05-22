@@ -5,6 +5,9 @@ import fs from 'fs';
 import os from 'os';
 
 import { prisma } from './prisma';
+import { NotificationService } from './notifications.service';
+
+const notificationService = new NotificationService();
 const execAsync = promisify(exec);
 
 const TEMP_SCRIPTS_DIR = path.join(os.tmpdir(), 'scriptflow-executions');
@@ -166,6 +169,14 @@ export class ScriptsService {
       });
 
       await this.logAudit('execute', 'script', id, userId);
+
+      // Create notification for successful execution
+      await notificationService.create({
+        userId,
+        type: 'success',
+        title: 'Script ejecutado',
+        message: `"${script.title}" se ejecutó correctamente (${duration}ms)`,
+      }).catch(() => {});
     } catch (error: any) {
       const duration = Date.now() - (execution.startedAt?.getTime() || Date.now());
       await prisma.execution.update({
@@ -177,7 +188,13 @@ export class ScriptsService {
           duration,
           finishedAt: new Date(),
         },
-      });
+      });      // Create notification for failed execution
+      await notificationService.create({
+        userId,
+        type: 'error',
+        title: 'Error en ejecución',
+        message: `"${script.title}" falló: ${(error.message || '').slice(0, 100)}`,
+      }).catch(() => {});
     } finally {
       try { fs.unlinkSync(filePath); } catch {}
     }

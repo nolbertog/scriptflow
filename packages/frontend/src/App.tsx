@@ -13,6 +13,7 @@ import Executions from './pages/Executions';
 import CronJobs from './pages/CronJobs';
 import Users from './pages/Users';
 import Settings from './pages/Settings';
+import Notifications from './pages/Notifications';
 import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
@@ -54,6 +55,7 @@ export default function App() {
             <Route path="/cron" element={<CronJobs />} />
             <Route path="/users" element={<Users />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/notifications" element={<Notifications />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" />} />

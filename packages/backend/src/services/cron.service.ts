@@ -1,4 +1,7 @@
 import { prisma } from './prisma';
+import { NotificationService } from './notifications.service';
+
+const notificationService = new NotificationService();
 
 export class CronService {
   async list(userId: number) {
@@ -57,6 +60,14 @@ export class CronService {
         userId: data.userId,
       },
     });
+
+    // Notify about new cron job
+    await notificationService.create({
+      userId: data.userId,
+      type: 'info',
+      title: 'Cron job creado',
+      message: `Programaste "${script.title}" con expresión: ${data.expression}`,
+    }).catch(() => {});
 
     return job;
   }

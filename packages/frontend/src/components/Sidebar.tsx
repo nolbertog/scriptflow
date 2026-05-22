@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Terminal,
+  Bell,
 } from 'lucide-react';
 import { useUiStore } from '../store/uiStore';
 import { useAuthStore } from '../store/authStore';
@@ -26,6 +27,7 @@ const menuItems: MenuItem[] = [
   { path: '/scripts', label: 'Scripts', icon: Code2 },
   { path: '/folders', label: 'Carpetas', icon: FolderTree },
   { path: '/executions', label: 'Ejecuciones', icon: Activity },
+  { path: '/notifications', label: 'Notificaciones', icon: Bell },
   { path: '/cron', label: 'Cron Jobs', icon: Terminal },
   { path: '/docker', label: 'Docker', icon: Container, disabled: true },
   { path: '/users', label: 'Usuarios', icon: Users },

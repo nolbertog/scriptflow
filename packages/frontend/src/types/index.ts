@@ -120,3 +120,19 @@ export interface AdminUser {
     executions: number;
   };
 }
+
+export interface Notification {
+  id: number;
+  userId: number;
+  type: 'success' | 'error' | 'warning' | 'info';
+  title: string;
+  message?: string;
+  isRead: boolean;
+  createdAt: string;
+}
+
+export interface NotificationsResponse {
+  notifications: Notification[];
+  total: number;
+  unreadCount: number;
+}

@@ -8,6 +8,7 @@ import dashboardRoutes from './routes/dashboard';
 import executionsRoutes from './routes/executions';
 import cronRoutes from './routes/cron';
 import usersRoutes from './routes/users';
+import notificationsRoutes from './routes/notifications';
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/executions', executionsRoutes);
 app.use('/api/cron', cronRoutes);
 app.use('/api/users', usersRoutes);
+app.use('/api/notifications', notificationsRoutes);
 
 // Health check
 app.get('/api/health', (_req, res) => {
