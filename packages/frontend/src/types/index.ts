@@ -91,3 +91,32 @@ export interface AuditLog {
   userId: number;
   createdAt: string;
 }
+
+export interface CronJob {
+  id: number;
+  scriptId: number;
+  userId: number;
+  expression: string;
+  description?: string;
+  isActive: boolean;
+  timezone: string;
+  retryCount: number;
+  lastRunAt?: string;
+  nextRunAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  script?: { id: number; title: string; language: string };
+}
+
+export interface AdminUser {
+  id: number;
+  email: string;
+  username: string;
+  role: 'admin' | 'developer' | 'viewer' | 'operator';
+  isActive: boolean;
+  createdAt: string;
+  _count: {
+    scripts: number;
+    executions: number;
+  };
+}

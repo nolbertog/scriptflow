@@ -5,6 +5,9 @@ import authRoutes from './routes/auth';
 import scriptsRoutes from './routes/scripts';
 import foldersRoutes from './routes/folders';
 import dashboardRoutes from './routes/dashboard';
+import executionsRoutes from './routes/executions';
+import cronRoutes from './routes/cron';
+import usersRoutes from './routes/users';
 
 const app = express();
 
@@ -16,6 +19,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/scripts', scriptsRoutes);
 app.use('/api/folders', foldersRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/executions', executionsRoutes);
+app.use('/api/cron', cronRoutes);
+app.use('/api/users', usersRoutes);
 
 // Health check
 app.get('/api/health', (_req, res) => {

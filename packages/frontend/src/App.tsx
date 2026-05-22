@@ -9,6 +9,10 @@ import Dashboard from './pages/Dashboard';
 import Scripts from './pages/Scripts';
 import ScriptEditor from './pages/ScriptEditor';
 import Folders from './pages/Folders';
+import Executions from './pages/Executions';
+import CronJobs from './pages/CronJobs';
+import Users from './pages/Users';
+import Settings from './pages/Settings';
 import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
@@ -46,6 +50,10 @@ export default function App() {
             <Route path="/scripts" element={<Scripts />} />
             <Route path="/scripts/:id" element={<ScriptEditor />} />
             <Route path="/folders" element={<Folders />} />
+            <Route path="/executions" element={<Executions />} />
+            <Route path="/cron" element={<CronJobs />} />
+            <Route path="/users" element={<Users />} />
+            <Route path="/settings" element={<Settings />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" />} />

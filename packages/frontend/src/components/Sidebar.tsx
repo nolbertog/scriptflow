@@ -14,15 +14,22 @@ import {
 import { useUiStore } from '../store/uiStore';
 import { useAuthStore } from '../store/authStore';
 
-const menuItems = [
+type MenuItem = {
+  path: string;
+  label: string;
+  icon: React.ComponentType<{ size?: number }>;
+  disabled?: boolean;
+};
+
+const menuItems: MenuItem[] = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/scripts', label: 'Scripts', icon: Code2 },
   { path: '/folders', label: 'Carpetas', icon: FolderTree },
-  { path: '/executions', label: 'Ejecuciones', icon: Activity, disabled: true },
-  { path: '/cron', label: 'Cron Jobs', icon: Terminal, disabled: true },
+  { path: '/executions', label: 'Ejecuciones', icon: Activity },
+  { path: '/cron', label: 'Cron Jobs', icon: Terminal },
   { path: '/docker', label: 'Docker', icon: Container, disabled: true },
-  { path: '/users', label: 'Usuarios', icon: Users, disabled: true },
-  { path: '/settings', label: 'Configuración', icon: Settings, disabled: true },
+  { path: '/users', label: 'Usuarios', icon: Users },
+  { path: '/settings', label: 'Configuración', icon: Settings },
 ];
 
 export default function Sidebar() {

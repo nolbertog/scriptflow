@@ -3,15 +3,19 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy root workspace files
-COPY package.json ./
+# Copy root workspace configuration files first (for layer caching)
+COPY package.json package-lock.json ./
+COPY packages/frontend/package.json ./packages/frontend/
+COPY packages/backend/package.json ./packages/backend/
+
+# Install ALL dependencies (workspaces, devDependencies for building)
+RUN npm ci
+
+# Copy frontend source code
 COPY packages/frontend ./packages/frontend
 
-# Install dependencies
-RUN npm install
-
-# Build the frontend
-RUN cd packages/frontend && npx vite build
+# Build the frontend (runs tsc + vite build via npm script)
+RUN cd packages/frontend && npm run build
 
 # ---- Nginx Stage ----
 FROM nginx:alpine
