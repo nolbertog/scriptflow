@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: packages/backend/Dockerfile
+    container_name: scriptflow-backend
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - JWT_SECRET=scriptflow-prod-secret-change-me
+      - JWT_EXPIRES_IN=7d
+      - CORS_ORIGIN=http://localhost:80
+      - NODE_ENV=production
+    volumes:
+      - scriptflow-data:/app/packages/backend/prisma
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: packages/frontend/Dockerfile
+    container_name: scriptflow-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  scriptflow-data:
