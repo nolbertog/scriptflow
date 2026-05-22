@@ -6,8 +6,10 @@ import os from 'os';
 
 import { prisma } from './prisma';
 import { NotificationService } from './notifications.service';
+import { EmailService } from './email.service';
 
 const notificationService = new NotificationService();
+const emailService = new EmailService();
 const execAsync = promisify(exec);
 
 const TEMP_SCRIPTS_DIR = path.join(os.tmpdir(), 'scriptflow-executions');
@@ -51,6 +53,7 @@ export class ScriptsService {
     language: string;
     content: string;
     folderId?: number;
+    notifyEmails?: string;
     userId: number;
   }) {
     const script = await prisma.script.create({
@@ -61,6 +64,7 @@ export class ScriptsService {
         content: data.content,
         folderId: data.folderId,
         userId: data.userId,
+        notifyEmails: data.notifyEmails,
       },
     });
 
@@ -88,6 +92,7 @@ export class ScriptsService {
     isProtected?: boolean;
     isFavorite?: boolean;
     tags?: string;
+    notifyEmails?: string;
   }) {
     const script = await prisma.script.findFirst({ where: { id, userId } });
     if (!script) throw new Error('Script no encontrado');
@@ -195,6 +200,29 @@ export class ScriptsService {
         title: 'Error en ejecución',
         message: `"${script.title}" falló: ${(error.message || '').slice(0, 100)}`,
       }).catch(() => {});
+
+      // Send email notification if configured
+      if (script.notifyEmails) {
+        const emails = script.notifyEmails
+          .split(',')
+          .map((e: string) => e.trim())
+          .filter((e: string) => e.includes('@'));
+
+        if (emails.length > 0) {
+          const userRecord = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { email: true },
+          });
+
+          emailService.sendScriptFailureAlert(
+            userId,
+            emails,
+            script.title,
+            (error.message || error.stderr || '').slice(0, 500),
+            undefined
+          ).catch(() => {});
+        }
+      }
     } finally {
       try { fs.unlinkSync(filePath); } catch {}
     }

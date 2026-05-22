@@ -18,6 +18,7 @@ const createScriptSchema = z.object({
   language: z.enum(['bash', 'python', 'javascript', 'powershell', 'php', 'go']).default('bash'),
   content: z.string().default(''),
   folderId: z.number().optional(),
+  notifyEmails: z.string().optional(),
 });
 
 // List scripts
@@ -52,8 +53,21 @@ router.post('/', authenticate, validate(createScriptSchema), async (req: AuthReq
   }
 });
 
+const updateScriptSchema = z.object({
+  title: z.string().min(1).max(100).optional(),
+  description: z.string().max(500).optional().nullable(),
+  language: z.enum(['bash', 'python', 'javascript', 'powershell', 'php', 'go']).optional(),
+  content: z.string().optional(),
+  folderId: z.number().optional().nullable(),
+  isLocked: z.boolean().optional(),
+  isProtected: z.boolean().optional(),
+  isFavorite: z.boolean().optional(),
+  tags: z.string().optional(),
+  notifyEmails: z.string().optional(),
+});
+
 // Update script
-router.patch('/:id', authenticate, async (req: AuthRequest, res: Response) => {
+router.patch('/:id', authenticate, validate(updateScriptSchema), async (req: AuthRequest, res: Response) => {
   try {
     const script = await scriptsService.update(getId(req.params.id), req.user!.userId, req.body);
     res.json(script);

@@ -24,6 +24,7 @@ export interface Script {
   isProtected: boolean;
   isFavorite: boolean;
   tags: string;
+  notifyEmails?: string;
   createdAt: string;
   updatedAt: string;
   folder?: { id: number; name: string; color: string } | null;
@@ -128,6 +129,20 @@ export interface Notification {
   title: string;
   message?: string;
   isRead: boolean;
+  createdAt: string;
+}
+
+export interface SmtpConfig {
+  id: number;
+  userId: number;
+  host: string;
+  port: number;
+  username: string;
+  fromEmail: string;
+  fromName: string;
+  secure: boolean;
+  isEnabled: boolean;
+  hasPassword: boolean;
   createdAt: string;
 }
 

@@ -26,6 +26,7 @@ model User {
   cronJobs     CronJob[]
   secrets      Secret[]
   notifications Notification[]
+  smtpConfig   SmtpConfig?
 }
 
 model Session {
@@ -69,6 +70,7 @@ model Script {
   isProtected Boolean  @default(false)
   isFavorite  Boolean  @default(false)
   tags        String   @default("") // comma-separated
+  notifyEmails String  @default("") // comma-separated list of emails to notify on failure
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -122,6 +124,23 @@ model CronJob {
 
   script Script @relation(fields: [scriptId], references: [id], onDelete: Cascade)
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model SmtpConfig {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  host      String   @default("smtp.gmail.com")
+  port      Int      @default(587)
+  username  String
+  password  String   // stored encrypted ideally, but plain text for now
+  fromEmail String
+  fromName  String   @default("ScriptFlow")
+  secure    Boolean  @default(false) // true for 465, false for 587
+  isEnabled Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Secret {

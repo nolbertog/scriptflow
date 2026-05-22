@@ -39,6 +39,7 @@ export default function ScriptEditor(props: ScriptEditorProps) {
   const [lastExecution, setLastExecution] = useState<Execution | null>(null);
   const [showTerminal, setShowTerminal] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [notifyEmails, setNotifyEmails] = useState('');
   const scriptId = parseInt(id!);
 
   const loadScript = useCallback(async () => {
@@ -48,6 +49,7 @@ export default function ScriptEditor(props: ScriptEditorProps) {
       setContent(s.content);
       setTitle(s.title);
       setLanguage(s.language);
+      setNotifyEmails(s.notifyEmails || '');
     } catch {
       toast.error('Script no encontrado');
       navigate('/scripts');
@@ -73,7 +75,7 @@ export default function ScriptEditor(props: ScriptEditorProps) {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const updated = await scriptsApi.update(scriptId, { title, content, language });
+      const updated = await scriptsApi.update(scriptId, { title, content, language, notifyEmails });
       setScript(updated);
       setHasChanges(false);
       toast.success('Script guardado');
@@ -199,42 +201,59 @@ export default function ScriptEditor(props: ScriptEditorProps) {
         {/* Editor and Output */}
         <div className="flex-1 flex flex-col gap-4 min-w-0">
           {/* Toolbar */}
-          <div className="flex items-center gap-3 bg-surface-100 rounded-xl border border-white/5 px-4 py-2">
-            <select
-              value={language}
-              onChange={(e) => { setLanguage(e.target.value); setHasChanges(true); }}
-              className="bg-surface-200 border border-white/5 rounded-lg px-3 py-1.5 text-sm text-gray-200 focus:outline-none focus:border-accent/50"
-            >
-              <option value="bash">Bash</option>
-              <option value="python">Python</option>
-              <option value="javascript">JavaScript</option>
-              <option value="powershell">PowerShell</option>
-              <option value="php">PHP</option>
-              <option value="go">Go</option>
-            </select>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-3 bg-surface-100 rounded-xl border border-white/5 px-4 py-2">
+              <select
+                value={language}
+                onChange={(e) => { setLanguage(e.target.value); setHasChanges(true); }}
+                className="bg-surface-200 border border-white/5 rounded-lg px-3 py-1.5 text-sm text-gray-200 focus:outline-none focus:border-accent/50"
+              >
+                <option value="bash">Bash</option>
+                <option value="python">Python</option>
+                <option value="javascript">JavaScript</option>
+                <option value="powershell">PowerShell</option>
+                <option value="php">PHP</option>
+                <option value="go">Go</option>
+              </select>
 
-            <div className="flex-1" />
+              <div className="w-px h-6 bg-white/5" />
 
-            <span className={`text-xs ${hasChanges ? 'text-yellow-400' : 'text-gray-500'}`}>
-              {hasChanges ? 'Sin guardar' : 'Guardado'}
-            </span>
+              <div className="flex items-center gap-2 flex-1">
+                <span className="text-xs text-gray-500 whitespace-nowrap">
+                  Notificar por email:
+                </span>
+                <input
+                  type="text"
+                  value={notifyEmails}
+                  onChange={(e) => { setNotifyEmails(e.target.value); setHasChanges(true); }}
+                  placeholder="email1@ejemplo.com, email2@ejemplo.com"
+                  className="flex-1 px-3 py-1.5 bg-surface-200 border border-white/5 rounded-lg text-xs text-gray-200 placeholder:text-gray-600 focus:outline-none focus:border-accent/50 transition-all min-w-0"
+                />
+              </div>
 
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm bg-surface-200 text-gray-300 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50"
-            >
-              {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
-              Guardar
-            </button>
-            <button
-              onClick={handleExecute}
-              disabled={executing}
-              className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors disabled:opacity-50"
-            >
-              {executing ? <Loader2 size={14} className="animate-spin" /> : <Play size={14} />}
-              {executing ? 'Ejecutando...' : 'Ejecutar'}
-            </button>
+              <div className="flex items-center gap-2">
+                <span className={`text-xs ${hasChanges ? 'text-yellow-400' : 'text-gray-500'}`}>
+                  {hasChanges ? 'Sin guardar' : 'Guardado'}
+                </span>
+
+                <button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm bg-surface-200 text-gray-300 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50"
+                >
+                  {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+                  Guardar
+                </button>
+                <button
+                  onClick={handleExecute}
+                  disabled={executing}
+                  className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors disabled:opacity-50"
+                >
+                  {executing ? <Loader2 size={14} className="animate-spin" /> : <Play size={14} />}
+                  {executing ? 'Ejecutando...' : 'Ejecutar'}
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Monaco Editor */}
